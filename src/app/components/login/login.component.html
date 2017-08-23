@@ -1,0 +1,24 @@
+<form [formGroup]="LoginForm" (ngSubmit)="submit(LoginForm)">
+
+    <md-input-container class="w-100">
+        <input mdInput type="email" placeholder="Email" required formControlName="email">
+        <md-error *ngIf="LoginForm.controls.email.hasError('pattern')">
+            Please enter a valid email address
+        </md-error>
+        <md-error *ngIf="LoginForm.controls.email.hasError('required')">
+            Email is <strong>required</strong>
+        </md-error>
+    </md-input-container>
+
+    <md-input-container class="w-100">
+        <input mdInput type="password" placeholder="Password" required formControlName="password">
+        <md-error *ngIf="LoginForm.controls.password.hasError('required')">
+            Password is <strong>required</strong>
+        </md-error>
+    </md-input-container>
+
+    <button md-raised-button type="submit" [disabled]="LoginForm.invalid">Submit</button>
+
+    <md-checkbox formControlName="remember">Remember me</md-checkbox>
+
+</form>

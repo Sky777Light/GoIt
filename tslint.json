@@ -22,6 +22,7 @@
     "no-input-rename": true,
     "no-output-rename": true,
     "no-empty": false,
+    "object-literal-key-quotes": [false, "consistent-as-needed"],
     "pipe-naming": [true, "camelCase", "my"],
     "templates-use-public": true,
     "use-host-property-decorator": true,

@@ -7,9 +7,14 @@ import { User } from '../../models/User';
 
 declare var alertify: any;
 
+interface ILoginData {
+    email: string;
+    password: string;
+    remember: boolean;
+}
+
 @Injectable()
 export class LoginService {
-
     constructor(
         private storageService: StorageService,
         private authService: AuthService,
@@ -17,11 +22,11 @@ export class LoginService {
         private userService: UserService
     ) {}
 
-    public logIn(remember: boolean, user: any): void {
-        this.authService.post('/auth/login', user).subscribe((res: any) => {
+    public logIn(loginData: ILoginData): void {
+        this.authService.post('/auth/login', loginData).subscribe((res: any) => {
             res = JSON.parse(res._body);
             if (res.status) {
-                remember ? this.storageService.set('token', res.token) : this.storageService.setSession('token', res.token) ;
+                loginData.remember ? this.storageService.set('token', res.token) : this.storageService.setSession('token', res.token);
                 this.router.navigate(['/']);
             }
             alertify.success(res.message);

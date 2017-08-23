@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { LoginService } from './login.service';
+import { EMAIL_REGEX, KEY_CODE } from '../../shared/enums';
 
 @Component({
   selector: 'app-login',
@@ -7,22 +10,26 @@ import { Component } from '@angular/core';
 })
 export class LoginComponent {
 
-  // private remember: boolean = true;
-  // private message: string = '';
-  // private user = new USER.User();
+  public LoginForm: FormGroup;
 
-  // constructor (
-  //     // private userService: UserService
-  // ) {}
+  constructor(
+      private loginService: LoginService
+  ) {
+    this.LoginForm = new FormGroup({
+      'email': new FormControl('', [Validators.required, Validators.pattern(EMAIL_REGEX)]),
+      'password': new FormControl('', Validators.required),
+      'remember': new FormControl(false)
+    });
+  }
+  @HostListener('window:keyup', ['$event'])
+  public keyEvent($event) {
+    if($event.keyCode === KEY_CODE.ENTER) {
+      this.submit(this.LoginForm);
+    }
+  }
 
-  // public logIn() {
-  //   // this.userService.logIn(this.remember, this.user);
-  // }
-
-  // public keyDown($event) {
-  //   if($event.keyCode === 13) {
-  //     this.logIn();
-  //   }
-  // }
+  public submit (form: FormGroup) {
+    this.loginService.logIn(form.value);
+  }
 
 }
