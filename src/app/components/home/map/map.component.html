@@ -1,0 +1,25 @@
+<agm-map
+  [latitude]="initPos.lat"
+  [longitude]="initPos.lng"
+  [zoom]="initPos.zoom"
+  [disableDefaultUI]="true"
+  (mapClick)="createMarker($event, map)" #mainMap>
+  <agm-marker
+    *ngFor="let marker of User.markers; let i = index"
+    [latitude]="marker.lat"
+    [longitude]="marker.lng"
+    [label]="marker.label"
+    [visible]="marker.visible"
+    [markerDraggable]="marker.draggable">
+    <agm-info-window>
+      <strong>{{marker.label}}</strong>
+    </agm-info-window>
+  </agm-marker>
+</agm-map>
+<md-toolbar color="primary">
+  <button md-button (click)="showMarkers(false)">hide</button>
+  <button md-button (click)="showMarkers(true)">show</button>
+  <button md-button (click)="saveMarkers()">save</button>
+</md-toolbar>
+
+

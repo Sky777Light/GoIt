@@ -20,26 +20,17 @@ module.exports = (passport) => {
     });
 
     passport.use(new LocalStrategy({
-        usernameField: "email",
+        usernameField: "login",
         passwordField: "password",
         passReqToCallback: true
-    },  (req, email, password, done) => {
-        User.findOne({ email: email }, (err, user) => {
+    },  (req, login, password, done) => {
+        console.log(login, "passport1");
+        User.findOne({$or:[ {login: login}, {email: login}]}, (err, user) => {
             if (err) return done(err);
 
-            if (!user) {
-                return done(null, null, {
-                    status: false,
-                    message: "No user found."
-                });
-            }
+            if (!user) return done(null, null, { status: false, message: "No user found." });
 
-            if (!user.comparePassword(password)) {
-                return done(null, null, {
-                    status: false,
-                    message: "Oops! Wrong password."
-                });
-            }
+            if (!user.comparePassword(password)) return done(null, null, { status: false, message: "Oops! Wrong password." });
 
             user.token = "JWT " + jwt.encode({ _id: user._id, username: user.username }, config.security.secret);
             user.save( (err, user) => {
@@ -53,10 +44,10 @@ module.exports = (passport) => {
 
     passport.use(new JwtStrategy({
         secretOrKey: config.security.secret,
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
-    },  (payload, done) => {
-        User.findOne({ _id: payload._id }, (err, user) => {
-            if (err) return done(err);
+        jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt')
+    },  function(payload, done) {
+        User.findOne({ id: payload.id }, (err, user) => {
+            if (err) return done(err, false);
 
             if (!user) {
                 return done(null, false, {

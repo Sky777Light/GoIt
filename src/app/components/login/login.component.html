@@ -1,12 +1,9 @@
 <form [formGroup]="LoginForm" (ngSubmit)="submit(LoginForm)">
 
     <md-input-container class="w-100">
-        <input mdInput type="email" placeholder="Email" required formControlName="email">
-        <md-error *ngIf="LoginForm.controls.email.hasError('pattern')">
-            Please enter a valid email address
-        </md-error>
-        <md-error *ngIf="LoginForm.controls.email.hasError('required')">
-            Email is <strong>required</strong>
+        <input mdInput placeholder="Email or Login" required formControlName="login">
+        <md-error *ngIf="LoginForm.controls.login.hasError('required')">
+            Login is <strong>required</strong>
         </md-error>
     </md-input-container>
 
@@ -14,6 +11,9 @@
         <input mdInput type="password" placeholder="Password" required formControlName="password">
         <md-error *ngIf="LoginForm.controls.password.hasError('required')">
             Password is <strong>required</strong>
+        </md-error>
+        <md-error *ngIf="LoginForm.controls.password.hasError('pattern')">
+            May contain at least 8-16 characters, 1 digit, 1 lower and upper case
         </md-error>
     </md-input-container>
 

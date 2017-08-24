@@ -41,12 +41,12 @@ let saveImage = (newImage, oldImage, done) => {
         return;
     }
 
-    let userImgLocation = 'resources/uploads/img/users/';
+    let userImgLocation = 'resources/uploads/img/user/';
     let uniqueImgName = 'image-' + crypto.createHash('sha1').update(crypto.randomBytes(20)).digest('hex');
 
     let imageTypeDetected = imageBuffer.type.match(/\/(.*?)$/);
     var serverPath  = userImgLocation + uniqueImgName + '.' + imageTypeDetected[1];
-    var clientPath  = '/uploads/img/users/' + uniqueImgName + '.' + imageTypeDetected[1];
+    var clientPath  = '/uploads/img/user/' + uniqueImgName + '.' + imageTypeDetected[1];
 
     fs.writeFile(serverPath, imageBuffer.data, 'base64', (err) =>{
         if(err){
@@ -66,24 +66,16 @@ router.get("/user/:id", (req, res) => {
     async.waterfall([
         (done) => {
             User.findOne({ _id: id }, {}, (err, user) => {
-                if(err){
-                    done(err, null);
-                    return;
-                }
+                if(err) return done(err, null);
 
-                if (!user) {
-                    done({status: false, message: "No user found."}, null);
-                    return;
-                }
+                if (!user) return done({status: false, message: "No user found."}, null);
+
                 done(err, user);
             })
         },
         (user, done) => {
             Marker.find( {owner: user._id}, (err, markers) => {
-                if(err){
-                    done(err, null);
-                    return;
-                }
+                if(err) return done(err, null);
 
                 user.markers = markers;
                 done(err, user);
@@ -114,44 +106,28 @@ router.put("/user", (req, res) => {
         (done) => {
             User.findOne({ _id: req.body._id }, {}, (err, user) => {
 
-                if (err) {
-                    done({status: false, message: "Undefined error, no user found."}, null);
-                    return;
-                }
+                if (err) return done({status: false, message: "Undefined error, no user found."}, null);
 
-                if (!user) {
-                    done({status: false, message: "No user found."}, null);
-                    return;
-                }
+                if (!user) return done({status: false, message: "No user found."}, null);
 
                 //if password was changed
                 if(req.body.oldPassword) {
-                    if (!user.comparePassword(req.body.oldPassword)) {
-                        done({status: false, message: "Oops! Wrong password."}, null);
-                        return;
-                    }
+                    if (!user.comparePassword(req.body.oldPassword)) return done({status: false, message: "Oops! Wrong password."}, null);
+
                     user.password = req.body.password;
 
                     user.save((err) => {
-                        if (err) {
-                            done(err, null);
-                            return;
-                        }
-                        done({status: true, message: "Password successfully was changed."}, null);
-                        return;
+                        if (err) return done(err, null);
+
+                        return done({status: true, message: "Password successfully was changed."}, null);
                     });
                 } else if (req.body.email !== user.email){
                     //if email was changed
                     User.findOne({ email: req.body.email }, function (err, result) {
-                        if(err){
-                            done(err, null);
-                            return;
-                        }
+                        if(err) return done(err, null);
 
-                        if (result) {
-                            done({status: false, email: true, message: "That email is already taken."}, null);
-                            return;
-                        }
+                        if (result) return done({status: false, email: true, message: "That email is already taken."}, null);
+
                         user.email = req.body.email;
 
                         done(null, user);
@@ -199,7 +175,7 @@ router.put("/user", (req, res) => {
 
 //create user
 router.post("/user", (req, res) => {
-    if (!req.body.email || !req.body.password || !req.body.firstName) {
+    if (!req.body.login || !req.body.email || !req.body.password || !req.body.firstName) {
         return res.json({
             status: false,
             message: "Empty fields."
@@ -208,18 +184,13 @@ router.post("/user", (req, res) => {
 
     async.waterfall([
         (done) => {
-            User.findOne({ email: req.body.email }, (err, user) => {
-                if(err){
-                    done(err, null);
-                    return;
-                }
+            User.findOne({$or:[ {login: req.body.login}, {email: req.body.email}]}, (err, user) => {
+                if(err) return done(err, null);
 
-                if (user) {
-                    done({status: false, email: true, message: "Email is already taken."}, null);
-                    return;
-                }
+                if (user) return done({status: false, email: true, message: `${user.login == req.body.login ? "Email" : "Login"} is already taken.`}, null);
 
                 let newUser = new User({
+                    login: req.body.login,
                     email: req.body.email,
                     password: req.body.password,
                     firstName: req.body.firstName,
@@ -247,12 +218,12 @@ router.post("/user", (req, res) => {
             if( err.message ){
                 return res.json(err);
             } else {
-                throw err;
+                return err;
             }
         }
 
         user.save( (err, user) => {
-            if (err) throw err;
+            if (err) return err;
 
             return res.json({
                 status: true,

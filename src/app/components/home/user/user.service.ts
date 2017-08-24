@@ -10,7 +10,7 @@ export class UserService {
   constructor() {}
 
   public get User() {
-    return this._User = this._clone(this._User);
+    return this._clone(this._User);
   }
 
   public set User(value) {
@@ -23,15 +23,12 @@ export class UserService {
   }
 
   public set(prop: string, value: any) {
-    return this._User[prop] = value;
+    let val = JSON.parse(JSON.stringify( value ));
+    return this._User[prop] = val;
   }
 
   public changeUser(user: IUser) {
-    for (let prop in user) {
-      if (this._User.hasOwnProperty(prop)) {
-        this._User[prop] = user[prop];
-      }
-    }
+    this._User = JSON.parse(JSON.stringify( user ));
   }
 
   private _clone(user: IUser) {

@@ -1,7 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { LoginService } from './login.service';
-import { EMAIL_REGEX, KEY_CODE } from '../../shared/enums';
+import { KEY_CODE, PASS_REGEX } from '../../shared/enums';
 
 @Component({
   selector: 'app-login',
@@ -16,8 +16,8 @@ export class LoginComponent {
       private loginService: LoginService
   ) {
     this.LoginForm = new FormGroup({
-      'email': new FormControl('', [Validators.required, Validators.pattern(EMAIL_REGEX)]),
-      'password': new FormControl('', Validators.required),
+      'login': new FormControl('', Validators.required),
+      'password': new FormControl('', [Validators.required, Validators.pattern(PASS_REGEX)]),
       'remember': new FormControl(false)
     });
   }

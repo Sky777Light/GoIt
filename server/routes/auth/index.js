@@ -30,32 +30,34 @@ router.post("/login", (req, res, next) => {
                 res.json({
                     status: true,
                     message: "Login success.",
-                    token: user.token
+                    user: user
                 });
             });
         })(req, res, next);
     };
 
-    if((req.body.email === config.superadmin.email) && (req.body.password === config.superadmin.password)){
-        User.findOne({email: req.body.email}, (err, user) => {
+    if((req.body.login === config.superadmin.login || req.body.login === config.superadmin.email)
+      && (req.body.password === config.superadmin.password)){
+        User.findOne({$or:[ {login: req.body.login}, {email: req.body.login}]}, (err, user) => {
             if (err) throw err;
 
             if(user){
                 passportCtrl();
             } else {
 
-                new User({
+              new User({
+                    login: config.superadmin.login,
                     email: config.superadmin.email,
                     password: config.superadmin.password,
                     firstName: "Super",
                     secondName: "User"
                 })
                 .save( (err, user) => {
-                    if (err) throw err;
-                    console.log("User save new login", user);
-                    user.token = "JWT " + jwt.encode({_id: user._id, email: user.email}, config.security.secret);
+                  if (err) return err;
+
+                  user.token = "JWT " + jwt.encode({_id: user._id, email: user.email}, config.security.secret);
                     user.save( (err, user) => {
-                        if (err) throw err;
+                        if (err) return err;
 
                         passportCtrl();
                     });
@@ -81,7 +83,7 @@ router.post("/logout", (req, res) => {
     req.user.token = "";
 
     req.user.save( (err, user) => {
-        if(err) throw err;
+        if(err) return err;
 
         req.logout();
 

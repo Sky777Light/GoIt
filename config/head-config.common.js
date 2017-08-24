@@ -44,7 +44,8 @@ module.exports = {
      * <link> tags for a Web App Manifest
      */
     { rel: 'manifest', href: '/assets/manifest.json' },
-    { rel: 'stylesheet', href: '/assets/libs/alertify.css', type:"text/css" }
+    { rel: 'stylesheet', href: '/assets/libs/alertify.css', type:"text/css" },
+    { href: "https://fonts.googleapis.com/icon?family=Material+Icons", rel: "stylesheet"}
   ],
   meta: [
     { name: 'msapplication-TileColor', content: '#00bcd4' },

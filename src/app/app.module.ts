@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AgmCoreModule } from '@agm/core';
 import { SharedMaterialModule } from './shared/shared-material/shared-material.module';
 
 import { routing } from './app.routes';
@@ -13,13 +14,16 @@ import { AppComponent } from './app.component';
 import { NoContentComponent } from './components/no-content';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
-import { UserComponent } from './components/home/users/user.component';
+import { UserComponent } from './components/home/user/user.component';
+import { HeaderComponent } from './components/home/header/header.component';
+import { MapComponent } from './components/home/map/map.component';
+import { AboutComponent } from './components/home/about/about.component';
 
 import { AuthGuardService } from './services/auth-guard.service';
 import { LoggedGuardService } from './services/logged-guard.service';
 import { StorageService } from './services/storage.service';
 import { AuthService } from './services/auth.service';
-import { UserService } from './components/home/users/user.service';
+import { UserService } from './components/home/user/user.service';
 import { LoginService } from './components/login/login.service';
 
 // styles
@@ -32,7 +36,10 @@ import '../styles/styles.sass';
     NoContentComponent,
     LoginComponent,
     HomeComponent,
-    UserComponent
+    UserComponent,
+    HeaderComponent,
+    MapComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +48,7 @@ import '../styles/styles.sass';
     HttpModule,
     BrowserAnimationsModule,
     SharedMaterialModule,
+    AgmCoreModule.forRoot(),
     routing
   ],
   providers: [

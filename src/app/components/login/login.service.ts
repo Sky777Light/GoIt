@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
-import { UserService } from '../home/users/user.service';
+import { UserService } from '../home/user/user.service';
 import { User } from '../../models/User';
 
 declare var alertify: any;
 
 interface ILoginData {
-    email: string;
+    login: string;
     password: string;
     remember: boolean;
 }
@@ -25,11 +25,15 @@ export class LoginService {
     public logIn(loginData: ILoginData): void {
         this.authService.post('/auth/login', loginData).subscribe((res: any) => {
             res = JSON.parse(res._body);
+
             if (res.status) {
-                loginData.remember ? this.storageService.set('token', res.token) : this.storageService.setSession('token', res.token);
+                loginData.remember ? this.storageService.set('token', res.user.token) : this.storageService.setSession('token', res.user.token);
+                this.userService.changeUser( res.user );
                 this.router.navigate(['/']);
-            }
-            alertify.success(res.message);
+                alertify.success(res.message);
+              } else {
+                alertify.error(res.message);
+              }
         }, (error) => {});
     }
 
@@ -40,8 +44,12 @@ export class LoginService {
             this.storageService.removeSession('token');
             this.userService.changeUser( new User() );
             this.router.navigate(['/login']);
+            if(res.status) {
+              alertify.success(res.message);
+            } else {
+              alertify.error(res.message);
+            }
 
-            alertify.success(res.message);
         }, (error) => {});
     }
 }

@@ -3,7 +3,20 @@ const bcrypt = require("bcrypt-nodejs");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    email: { type: String, unique: true, required: true },
+    login: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
+      match: [/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/]
+    },
     password: { type: String, required: true },
     firstName: { type: String, required: true },
     secondName: { type: String },
@@ -20,6 +33,7 @@ userSchema.methods.comparePassword =  function(password) {
 };
 
 userSchema.pre("save",  function(next) {
+    this.updated = Date.now();
     if (this.isModified("password") || this.isNew) this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(10), null);
 
     next();

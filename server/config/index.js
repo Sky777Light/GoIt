@@ -11,7 +11,8 @@ module.exports = {
         expiresIn: "24h"
     },
     superadmin: {
-        email: "superuser",
-        password: "superpass"
+        login: "superuser",
+        email: "super@super.com",
+        password: "1Superpass"
     }
 };
