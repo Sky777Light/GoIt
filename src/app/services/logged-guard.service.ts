@@ -21,7 +21,7 @@ export class LoggedGuardService implements CanActivate {
         let token = this.storageService.get('token') || this.storageService.getSession('token');
 
         if ( !!token ) {
-            return Observable.of(true);
+            return Observable.of(false);
         } else if ( this.userService.get('token') === token ) {
             alertify.error('You need logout first');
             return Observable.of(false);

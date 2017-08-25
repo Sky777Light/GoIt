@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LoginService } from '../../login/login.service';
 
 @Component({
   selector: 'main-header',
@@ -8,8 +9,8 @@ import { Component } from '@angular/core';
 
 export class HeaderComponent {
 
-  constructor() {
-
-  }
+  constructor(
+      private loginService: LoginService
+  ) {}
 
 }

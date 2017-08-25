@@ -3,6 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { LoginService } from './login.service';
 import { KEY_CODE, PASS_REGEX } from '../../shared/enums';
 
+declare var alertify: any;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -29,6 +31,10 @@ export class LoginComponent {
   }
 
   public submit (form: FormGroup) {
+    if (form.invalid) {
+      alertify.error('Please fill the form');
+      return;
+    }
     this.loginService.logIn(form.value);
   }
 

@@ -5,6 +5,6 @@
   </button>
   <button md-button routerLink="/map">Map</button>
   <button md-button routerLink="/about">About</button>
-  <button md-button routerLink="/login">Login</button>
+  <button md-button (click)="loginService.logOut()">Logout</button>
 
 </md-toolbar>

@@ -1,13 +1,13 @@
 <form [formGroup]="LoginForm" (ngSubmit)="submit(LoginForm)">
 
-    <md-input-container class="w-100">
+    <md-input-container  color="primary" class="w-100">
         <input mdInput placeholder="Email or Login" required formControlName="login">
         <md-error *ngIf="LoginForm.controls.login.hasError('required')">
             Login is <strong>required</strong>
         </md-error>
     </md-input-container>
 
-    <md-input-container class="w-100">
+    <md-input-container  color="primary" class="w-100">
         <input mdInput type="password" placeholder="Password" required formControlName="password">
         <md-error *ngIf="LoginForm.controls.password.hasError('required')">
             Password is <strong>required</strong>
@@ -17,8 +17,8 @@
         </md-error>
     </md-input-container>
 
-    <button md-raised-button type="submit" [disabled]="LoginForm.invalid">Submit</button>
+    <button md-raised-button color="primary" type="submit" >Submit</button>
 
-    <md-checkbox formControlName="remember">Remember me</md-checkbox>
+    <md-checkbox color="primary" formControlName="remember">Remember me</md-checkbox>
 
 </form>
