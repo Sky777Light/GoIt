@@ -18,6 +18,7 @@ import { UserComponent } from './components/home/user/user.component';
 import { HeaderComponent } from './components/home/header/header.component';
 import { MapComponent } from './components/home/map/map.component';
 import { AboutComponent } from './components/home/about/about.component';
+import { CustomMarkerDirective } from './components/home/map/custom-marker/custom-marker.directive';
 
 import { AuthGuardService } from './services/auth-guard.service';
 import { LoggedGuardService } from './services/logged-guard.service';
@@ -26,6 +27,7 @@ import { AuthService } from './services/auth.service';
 import { UserService } from './components/home/user/user.service';
 import { LoginService } from './components/login/login.service';
 import { MapService } from './components/home/map/map.service';
+import { CustomMarkerManager } from './components/home/map/custom-marker/custom-marker.service';
 
 // styles
 import '../styles/styles.sass';
@@ -40,7 +42,8 @@ import '../styles/styles.sass';
     UserComponent,
     HeaderComponent,
     MapComponent,
-    AboutComponent
+    AboutComponent,
+    CustomMarkerDirective
   ],
   imports: [
     BrowserModule,
@@ -49,7 +52,10 @@ import '../styles/styles.sass';
     HttpModule,
     BrowserAnimationsModule,
     SharedMaterialModule,
-    AgmCoreModule.forRoot(),
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyANqwcY2SbwJYDOnpjeVoFHTzMupfjuYeI',
+      libraries: ['places']
+    }),
     routing
   ],
   providers: [
@@ -60,7 +66,8 @@ import '../styles/styles.sass';
     AuthService,
     UserService,
     LoginService,
-    MapService
+    MapService,
+    CustomMarkerManager
   ]
 })
 

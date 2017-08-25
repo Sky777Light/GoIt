@@ -1,12 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AgmMap, MapsAPILoader } from '@agm/core';
-import { ODESSA_POS } from '../../../shared/enums';
+import { LOCATION_MARKER, ODESSA_POS } from '../../../shared/enums';
 import { UserService } from '../user/user.service';
 import { IUser } from '../../../models/IUser';
 import { IMarker } from '../../../models/IMarker';
 import { Marker } from '../../../models/Marker';
 import { MapService } from './map.service';
+
+declare var google;
 
 @Component({
   selector: 'map',
@@ -15,11 +17,15 @@ import { MapService } from './map.service';
 })
 
 export class MapComponent {
-
+  @ViewChild('locBtn') private locBtn: ElementRef;
   @ViewChild(AgmMap) private mainMap: any;
 
   private initPos = ODESSA_POS;
+  private locationMarker = LOCATION_MARKER;
   private User: IUser;
+  private nativeMap;
+  private searchedPlaces: any[];
+
 
   constructor(
     private route: ActivatedRoute,
@@ -32,13 +38,22 @@ export class MapComponent {
 
   ngAfterViewInit() {
     this.mapsAPILoader.load().then(() => {
-      this.findUserLocation();
+      this.mainMap._mapsWrapper.getNativeMap().then( (map) => {
+        this.nativeMap = map;
+        this.nativeMap.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(this.locBtn.nativeElement);
+      }, (err) => {
+        console.log('error', err);
+      });
     });
   }
 
   public findUserLocation(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition( (position) => {
+        this.locationMarker.visible = true;
+        this.locationMarker.position.lat = position.coords.latitude;
+        this.locationMarker.position.lng =  position.coords.longitude;
+
         this.mainMap._mapsWrapper.setCenter({
           lat: position.coords.latitude,
           lng: position.coords.longitude
@@ -47,6 +62,28 @@ export class MapComponent {
         console.log(err);
       });
     }
+  }
+
+  public getPlaces(types: string): void {
+    let service = new google.maps.places.PlacesService(this.nativeMap);
+    service.nearbySearch({
+      location: this.nativeMap.getCenter(),
+      radius: 500,
+      type: [types]
+    }, (res, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        for (let marker of res) {
+          marker.icon = {
+            url: marker.icon,
+            scaledSize: {
+              height: 30,
+              width: 30
+            }
+          };
+        }
+        this.searchedPlaces = res;
+      }
+    });
   }
 
   public createMarker($event: MouseEvent): void {

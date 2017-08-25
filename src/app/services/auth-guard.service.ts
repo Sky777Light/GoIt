@@ -7,7 +7,7 @@ import { StorageService } from './storage.service';
 import { AuthService } from './auth.service';
 import { UserService } from '../components/home/user/user.service';
 import { LoginService } from '../components/login/login.service';
-import {IUser} from "../models/IUser";
+import { IUser } from '../models/IUser';
 
 declare var alertify: any;
 
@@ -25,7 +25,12 @@ export class AuthGuardService implements CanActivate,  Resolve<any> {
   public canActivate (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     let token = this.storageService.get('token') || this.storageService.getSession('token');
 
-    if(this.userService.get("token") === token){
+    if ( !token ) {
+      this.router.navigate(['/login']);
+
+      alertify.error('You are not logged in');
+      return Observable.of(false);
+    } else if (this.userService.get('token') === token) {
       return Observable.of(true);
     } else {
       return this.authService.post(`/auth/isauth/${token}`, {}).map((res: any) => {
@@ -44,18 +49,20 @@ export class AuthGuardService implements CanActivate,  Resolve<any> {
   }
 
   public resolve (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IUser> {
-    if(this.userService.User._id) return this.userService.User;
+    if (this.userService.User._id) {
+      return Observable.of(this.userService.User);
+    } else {
+      return this.authService.get('/api/user/user/undefined').map((res: any) => {
+        res = res.json();
 
-    return this.authService.get('/api/user/user/undefined').map((res: any) => {
-      res = res.json();
-
-      if (res.status) {
-        this.userService.changeUser(res.res);
-      } else {
-        this.loginService.logOut();
-      }
-      return this.userService.User;
-    });
+        if (res.status) {
+          this.userService.changeUser(res.res);
+        } else {
+          this.loginService.logOut();
+        }
+        return this.userService.User;
+      });
+    }
 
   }
 

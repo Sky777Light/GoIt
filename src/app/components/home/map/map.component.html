@@ -4,22 +4,54 @@
   [zoom]="initPos.zoom"
   [disableDefaultUI]="true"
   (mapClick)="createMarker($event, map)" #mainMap>
+
   <agm-marker
     *ngFor="let marker of User.markers; let i = index"
     [latitude]="marker.lat"
     [longitude]="marker.lng"
-    [label]="marker.label"
     [visible]="marker.visible"
+    [iconUrl]="ic"
     [markerDraggable]="marker.draggable">
     <agm-info-window>
       <strong>{{marker.label}}</strong>
     </agm-info-window>
   </agm-marker>
+
+
+  <agm-marker
+          [latitude]="locationMarker.position.lat"
+          [longitude]="locationMarker.position.lng"
+          [iconUrl]="locationMarker.icon"
+          [visible]="locationMarker.visible">
+  </agm-marker>
+
+  <agm-marker
+          *ngFor="let marker of searchedPlaces; let i = index"
+          [latitude]="marker.geometry.location.lat()"
+          [longitude]="marker.geometry.location.lng()"
+          [iconUrl]="marker.icon" class="near-places">
+    <agm-info-window>
+      <strong>{{marker.name}}</strong>
+    </agm-info-window>
+  </agm-marker>
+
 </agm-map>
+
 <md-toolbar color="primary">
   <button md-button (click)="showMarkers(false)">hide</button>
   <button md-button (click)="showMarkers(true)">show</button>
   <button md-button (click)="saveMarkers()">save</button>
+
+  <md-select  placeholder="Choose places" >
+    <md-option ng-value="undefined"></md-option>
+    <md-option *ngFor="let place of ['restaurant', 'pharmacy', 'gas stations', 'school']" [value]="place" (click)="getPlaces(place)">{{place}}</md-option>
+  </md-select>
 </md-toolbar>
+
+<div class="location-btn" #locBtn>
+  <button md-fab color="primary" (click)="findUserLocation()">
+    <md-icon>my_location</md-icon>
+  </button>
+</div>
 
 

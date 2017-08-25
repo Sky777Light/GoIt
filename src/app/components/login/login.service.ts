@@ -23,6 +23,9 @@ export class LoginService {
     ) {}
 
     public logIn(loginData: ILoginData): void {
+        this.storageService.remove('token');
+        this.storageService.removeSession('token');
+
         this.authService.post('/auth/login', loginData).subscribe((res: any) => {
             res = JSON.parse(res._body);
 
