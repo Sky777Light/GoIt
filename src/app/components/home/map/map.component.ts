@@ -1,11 +1,12 @@
-import {Component, ViewChild} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {AgmMap, MapsAPILoader} from '@agm/core';
+import { Component, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AgmMap, MapsAPILoader } from '@agm/core';
 import { ODESSA_POS } from '../../../shared/enums';
-import {UserService} from "../user/user.service";
-import {IUser} from "../../../models/IUser";
-import {IMarker} from "../../../models/IMarker";
-import {Marker} from "../../../models/Marker";
+import { UserService } from '../user/user.service';
+import { IUser } from '../../../models/IUser';
+import { IMarker } from '../../../models/IMarker';
+import { Marker } from '../../../models/Marker';
+import { MapService } from './map.service';
 
 @Component({
   selector: 'map',
@@ -14,7 +15,8 @@ import {Marker} from "../../../models/Marker";
 })
 
 export class MapComponent {
-  @ViewChild(AgmMap) mainMap: any;
+
+  @ViewChild(AgmMap) private mainMap: any;
 
   private initPos = ODESSA_POS;
   private User: IUser;
@@ -22,7 +24,8 @@ export class MapComponent {
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
-    private mapsAPILoader: MapsAPILoader
+    private mapsAPILoader: MapsAPILoader,
+    private mapService: MapService
   ) {
       this.User = this.userService.User;
     }
@@ -35,12 +38,12 @@ export class MapComponent {
 
   public findUserLocation(): void {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
+      navigator.geolocation.getCurrentPosition( (position) => {
         this.mainMap._mapsWrapper.setCenter({
           lat: position.coords.latitude,
           lng: position.coords.longitude
         });
-      }, err => {
+      }, (err) => {
         console.log(err);
       });
     }
@@ -58,16 +61,24 @@ export class MapComponent {
       true
     );
 
-    this.User.markers.push(marker);
+    this.User.markers.push( marker );
   }
 
   private showMarkers(flag: boolean): void {
-    this.User.markers.forEach( marker =>{
+    this.User.markers.forEach( (marker) => {
       marker.visible = flag;
-    })
+    });
   }
 
   private saveMarkers(): void {
-    console.log(this.User.markers);
+
+    let newMarkers = [];
+    this.User.markers.forEach( (marker) => {
+        if(!marker._id) {
+          newMarkers.push( marker );
+        }
+    });
+
+    this.mapService.saveMarkers( newMarkers );
   }
 }

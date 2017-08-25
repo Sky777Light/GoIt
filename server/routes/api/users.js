@@ -45,8 +45,8 @@ let saveImage = (newImage, oldImage, done) => {
     let uniqueImgName = 'image-' + crypto.createHash('sha1').update(crypto.randomBytes(20)).digest('hex');
 
     let imageTypeDetected = imageBuffer.type.match(/\/(.*?)$/);
-    var serverPath  = userImgLocation + uniqueImgName + '.' + imageTypeDetected[1];
-    var clientPath  = '/uploads/img/user/' + uniqueImgName + '.' + imageTypeDetected[1];
+    let serverPath  = userImgLocation + uniqueImgName + '.' + imageTypeDetected[1];
+    let clientPath  = '/uploads/img/user/' + uniqueImgName + '.' + imageTypeDetected[1];
 
     fs.writeFile(serverPath, imageBuffer.data, 'base64', (err) =>{
         if(err){

@@ -25,6 +25,7 @@ import { StorageService } from './services/storage.service';
 import { AuthService } from './services/auth.service';
 import { UserService } from './components/home/user/user.service';
 import { LoginService } from './components/login/login.service';
+import { MapService } from './components/home/map/map.service';
 
 // styles
 import '../styles/styles.sass';
@@ -58,7 +59,8 @@ import '../styles/styles.sass';
     StorageService,
     AuthService,
     UserService,
-    LoginService
+    LoginService,
+    MapService
   ]
 })
 
