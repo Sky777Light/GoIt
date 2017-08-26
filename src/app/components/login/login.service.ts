@@ -28,7 +28,6 @@ export class LoginService {
 
         this.authService.post('/auth/login', loginData).subscribe((res: any) => {
             res = JSON.parse(res._body);
-          console.log(res);
           if (res.status) {
                 loginData.remember ? this.storageService.set('token', res.user.token) : this.storageService.setSession('token', res.user.token);
                 this.userService.changeUser( res.user );
