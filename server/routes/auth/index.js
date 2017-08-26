@@ -5,6 +5,7 @@ const jwt = require("jwt-simple");
 const config = require("../../config");
 
 const User = require("../../models/user");
+const Marker = require("../../models/marker");
 
 router.post("/isauth/:token", (req, res, next) => {
     if(req.user && (req.params.token === req.user.token)){
@@ -27,10 +28,15 @@ router.post("/login", (req, res, next) => {
             req.login(user, (err) => {
                 if (err) throw err;
 
-                res.json({
-                    status: true,
-                    message: "Login success.",
-                    user: user
+                Marker.find( {owner: user._id}, (err, markers) => {
+                    if(err) return done(err, null);
+
+                    user.markers = markers;
+                    res.json({
+                        status: true,
+                        message: "Login success.",
+                        user: user
+                    });
                 });
             });
         })(req, res, next);

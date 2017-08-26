@@ -76,10 +76,9 @@ router.get("/user/:id", (req, res) => {
         (user, done) => {
             Marker.find( {owner: user._id}, (err, markers) => {
                 if(err) return done(err, null);
-
-                user.markers = markers;
+              user.markers = markers;
                 done(err, user);
-            })
+            });
         }
     ], (err, user) => {
 
@@ -90,8 +89,8 @@ router.get("/user/:id", (req, res) => {
                 throw err;
             }
         }
-
-        res.json({
+      console.log(user);
+      res.json({
             status: true,
             res: user
         });

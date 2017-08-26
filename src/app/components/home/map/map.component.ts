@@ -68,7 +68,7 @@ export class MapComponent {
     let service = new google.maps.places.PlacesService(this.nativeMap);
     service.nearbySearch({
       location: this.nativeMap.getCenter(),
-      radius: 500,
+      radius: 2000,
       type: [types]
     }, (res, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {

@@ -30,13 +30,13 @@ router.post("/save", (req, res) => {
         if(err){
             return res.json({
                 status: true,
-                res: savedMarkers,
+                markers: savedMarkers,
                 message: `${req.body.length > 1 ? "Marker" : "Some markers"}  isn't correct.`
             });
         }
         return res.json({
             status: true,
-            res: savedMarkers,
+            markers: savedMarkers,
             message: `${savedMarkers.length > 1 ? "Marker" : "Markers"} successfully was added.`
         });
     });
